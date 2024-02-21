@@ -221,4 +221,15 @@ describe('zod', () => {
 
     });
 
+    it('should support transform', async () => {
+
+        const schema = z.string().transform((data) => {
+            return data.toUpperCase().trim();
+        });
+
+        const result = schema.parse("     khannedy     ");
+        console.info(result);
+
+    });
+
 });
