@@ -1,4 +1,4 @@
-import {z, ZodError} from "zod";
+import {RefinementCtx, z, ZodError} from "zod";
 
 describe('zod', () => {
 
@@ -65,8 +65,8 @@ describe('zod', () => {
 
         try {
             schema.parse("ek");
-        }catch (err){
-            if (err instanceof ZodError){
+        } catch (err) {
+            if (err instanceof ZodError) {
                 console.error(err);
                 // err.errors.forEach((error) => {
                 //     console.info(error.message);
@@ -82,7 +82,7 @@ describe('zod', () => {
 
         const result = schema.safeParse("eko@example.com");
 
-        if(result.success){
+        if (result.success) {
             console.info(result.data);
         } else {
             console.error(result.error);
@@ -195,7 +195,7 @@ describe('zod', () => {
         try {
             const result = loginSchema.parse(request);
             console.info(result);
-        }catch (err){
+        } catch (err) {
             console.error(err);
         }
 
@@ -228,6 +228,34 @@ describe('zod', () => {
         });
 
         const result = schema.parse("     khannedy     ");
+        console.info(result);
+
+    });
+
+    function mustUpperCase(data: string, ctx: RefinementCtx): string {
+        if (data != data.toUpperCase()) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "username harus uppercase"
+            })
+            return z.NEVER;
+        } else {
+            return data;
+        }
+    }
+
+    it('should can use custom validation', async () => {
+
+        const loginSchema = z.object({
+            username: z.string().email().transform(mustUpperCase),
+            password: z.string().min(6).max(20)
+        });
+
+        const request = {
+            username: "EKO@EXAMPLE.COM",
+            password: "rahasia"
+        };
+        const result = loginSchema.parse(request);
         console.info(result);
 
     });
