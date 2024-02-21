@@ -201,4 +201,24 @@ describe('zod', () => {
 
     });
 
+    it('should can support optional validation', async () => {
+
+        const registerSchema = z.object({
+            username: z.string().email(),
+            password: z.string().min(6).max(20),
+            firstName: z.string().min(3).max(100),
+            lastName: z.string().min(3).max(100).optional(),
+        })
+
+        const request = {
+            username: "eko@example.com",
+            password: "rahasia",
+            firstName: "Eko",
+        }
+
+        const result = registerSchema.parse(request);
+        console.info(result);
+
+    });
+
 });
